@@ -38,7 +38,7 @@ Web Developer (Backend)-
 - 기타도구: AWS S3(이미지 저장용)
 ```
 
-**주요요구사항(개발 완료된 기능은 밑줄)**
+**주요요구사항**
 
 1) 로그인
 
@@ -75,7 +75,7 @@ Web Developer (Backend)-
 - 회원은 헬스장의 정보를 조회할 수 있어야한다. 
 - 회원은 건의사항을 이메일을 통해 관리자에게 전송할 수 있어야 한다.
 
-소스코드: [헬스일정예약관리시스템](https://github.com/SeoJaeyeon/SEOJAEYEON_PROJECT/fitnessManagementSystem)
+소스코드: [헬스일정예약관리시스템](https://github.com/SeoJaeyeon/SEOJAEYEON_PROJECT/tree/master/fitnessManagementSystem)
 
 ---
 
@@ -105,7 +105,7 @@ ex) 판교역 언제와?, 판교인데 지하철 언제와? 판교에 언제와?
 
 4) 자연어로 사용자에 제공 
 
-소스코드: [지하철다물어봐!](https://github.com/SeoJaeyeon/SEOJAEYEON_PROJECT/subway_chatbot)
+소스코드: [지하철다물어봐!](https://github.com/SeoJaeyeon/SEOJAEYEON_PROJECT/tree/master/subway_chatbot)
 
 ---
 
@@ -140,4 +140,4 @@ ex) 판교역 언제와?, 판교인데 지하철 언제와? 판교에 언제와?
 
 - 사용자가 키워드를 전송(ex: 김치찌개)하면 해당 키워드와 좌표로 카카오 API 호출하여 음식점 데이터 응답을 받고 필요 정보를 파싱하여 리턴  
 
-소스코드:[오늘뭐먹지?](https://github.com/SeoJaeyeon/SEOJAEYEON_PROJECT/foodSelector)
+소스코드:[오늘뭐먹지?](https://github.com/SeoJaeyeon/SEOJAEYEON_PROJECT/tree/master/foodSelector)
