@@ -40,7 +40,7 @@ import kr.ac.smu.mybatis.mapper.PlaceMapper;
 @Controller
 public class ProjectController {
 	Logger logger = LoggerFactory.getLogger(ProjectController.class);
-	static final String appKey="";
+	static final String appKey="appkey";
 	
 	@Autowired
 	CustomMapper customMapper;
@@ -56,14 +56,6 @@ public class ProjectController {
 		headers.add("Content-Type", "application/json;charset=UTF-8");
 
 		headers.set("Authorization", appKey); //appKey 설정 ,KakaoAK kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk 이 형식 준수
-		 
-		MultiValueMap<String, String> parameters = new LinkedMultiValueMap<String, String>();
-
-		parameters.add("query", "%EA%B9%80%EC%B9%98%EC%B0%8C%EA%B0%9C");
-		parameters.add("category_group_code", "FD6");
-		parameters.add("x", "127.06283102249932");
-		parameters.add("y", "37.514322572335935");
-
 
 		HttpEntity entity = new HttpEntity("parameters", headers); 
 		URI url=URI.create("https://dapi.kakao.com/v2/local/search/keyword.json?query=%EA%B9%80%EC%B9%98%EC%B0%8C%EA%B0%9C&category_group_code=FD6&x=127.213123&y=65.213123"); 
@@ -103,7 +95,6 @@ public class ProjectController {
 	@RequestMapping(value="/completerandom", method=RequestMethod.POST,produces="application/json;charset=UTF-8" )
 	@ResponseBody
 	public Map<Integer,PlaceDTO> completeRandom(HttpServletRequest req) throws ParseException{
-		Map<Integer, PlaceDTO> data=new HashMap<Integer, PlaceDTO>();
 		RestTemplate restTemplate = new RestTemplate(); 
 
 		HttpHeaders headers = new HttpHeaders(); 
@@ -112,7 +103,7 @@ public class ProjectController {
 		headers.set("Authorization", appKey); //appKey 설정 ,KakaoAK kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk 이 형식 준수
 
 		HttpEntity entity = new HttpEntity("parameters", headers); 
-		URI url=URI.create("https://dapi.kakao.com/v2/local/search/keyword.json?query=%EA%B9%80%EC%B9%98%EC%B0%8C%EA%B0%9C&category_group_code=FD6&x="+req.getParameter("x")+"&y="+req.getParameter("y")); 
+		URI url=URI.create("https://dapi.kakao.com/v2/local/search/keyword.json?query=%EA%B9%80%EC%B9%98%EC%B0%8C%EA%B0%9C&size=15&category_group_code=FD6&x="+req.getParameter("x")+"&y="+req.getParameter("y")); 
 		//x -> x좌표, y -> y좌표 
 
 		ResponseEntity response= restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
@@ -127,37 +118,96 @@ public class ProjectController {
 		JSONArray docuArray = (JSONArray) jsonObject.get("documents");
 		//documents만 뽑아오고  
 
-		JSONObject obj=(JSONObject) docuArray.get(0);
-		PlaceDTO info=new PlaceDTO();
+		
+		Map<Integer, PlaceDTO> place_list=new HashMap<Integer,PlaceDTO>();
+		for(int i=0; i<15; i++){
+			JSONObject obj=(JSONObject) docuArray.get(i);
+			PlaceDTO info=new PlaceDTO();
+			info.setId(obj.get("id").toString());	
+			info.setPlace_name(obj.get("place_name").toString());
+			info.setCategory_name(obj.get("category_name").toString());
+			info.setPhone(obj.get("phone").toString());
+			info.setAddress_name(obj.get("address_name").toString());
+			info.setRoad_address_name(obj.get("road_address_name").toString());
+			info.setX(obj.get("x").toString());
+			info.setY(obj.get("y").toString());
+			info.setPlace_url(obj.get("place_url").toString());
+			info.setDistance(obj.get("distance").toString());
 
-		info.setId(obj.get("id").toString());	
-		info.setPlace_name(obj.get("place_name").toString());
-		info.setCategory_name(obj.get("category_name").toString());
-		info.setPhone(obj.get("phone").toString());
-		info.setAddress_name(obj.get("address_name").toString());
-		info.setRoad_address_name(obj.get("road_address_name").toString());
-		info.setX(obj.get("x").toString());
-		info.setY(obj.get("y").toString());
-		info.setPlace_url(obj.get("place_url").toString());
-		info.setDistance(obj.get("distance").toString());
-
-		data.put(0,info);
+			place_list.put(i+1,info);
+		}
+		
 		logger.info(new Date()+"/completerandom POST Request");
-		return data;
+		return place_list;
 	}
 	
-	
-	@RequestMapping(value="/batis", method=RequestMethod.GET)
+	// 완전 랜덤테스트(1개만)
+	@RequestMapping(value="/completerandomtest", method=RequestMethod.POST,produces="application/json;charset=UTF-8" )
 	@ResponseBody
-	public PreferenceDTO testMybatis(){
-		PreferenceDTO pd=null;
+	public Map<Integer,PlaceDTO> completeRandomTest(HttpServletRequest req) throws ParseException{
+		RestTemplate restTemplate = new RestTemplate(); 
 
-		pd=customMapper.selectByCustom("0000", "abc");
+		HttpHeaders headers = new HttpHeaders(); 
+
+		headers.add("Content-Type", "application/json;charset=UTF-8");
+		headers.set("Authorization", appKey); //appKey 설정 ,KakaoAK kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk 이 형식 준수
+
+		HttpEntity entity = new HttpEntity("parameters", headers); 
+		URI url=URI.create("https://dapi.kakao.com/v2/local/search/keyword.json?query=%EA%B9%80%EC%B9%98%EC%B0%8C%EA%B0%9C&size=15&category_group_code=FD6&x="+req.getParameter("x")+"&y="+req.getParameter("y")); 
+		//x -> x좌표, y -> y좌표 
+
+		ResponseEntity response= restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+		//String 타입으로 받아오면 JSON 객체 형식으로 넘어옴
+
+		JSONParser jsonParser = new JSONParser(); 
+		JSONObject jsonObject = (JSONObject) jsonParser.parse(response.getBody().toString()); 
+
+		//저는 Body 부분만 사용할거라 getBody 후 JSON 타입을 인자로 넘겨주었습니다
+
+		//헤더도 필요하면 getBody()는 사용할 필요가 없겠쥬
+		JSONArray docuArray = (JSONArray) jsonObject.get("documents");
+		//documents만 뽑아오고  
 
 		
-		return pd;
+		Map<Integer, PlaceDTO> place_list=new HashMap<Integer,PlaceDTO>();
+
+			JSONObject obj=(JSONObject) docuArray.get(0);
+			PlaceDTO info=new PlaceDTO();
+			info.setId(obj.get("id").toString());	
+			info.setPlace_name(obj.get("place_name").toString());
+			info.setCategory_name(obj.get("category_name").toString());
+			info.setPhone(obj.get("phone").toString());
+			info.setAddress_name(obj.get("address_name").toString());
+			info.setRoad_address_name(obj.get("road_address_name").toString());
+			info.setX(obj.get("x").toString());
+			info.setY(obj.get("y").toString());
+			info.setPlace_url(obj.get("place_url").toString());
+			info.setDistance(obj.get("distance").toString());
+
+			place_list.put(1,info);
+		
+		
+		logger.info(new Date()+"/completerandom POST Request");
+		return place_list;
 	}
 	
+	@RequestMapping(value="/customrandom", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<Integer,PlaceDTO> customRandom(HttpServletRequest req){
+		String userId=req.getParameter("userId");
+		String customName=req.getParameter("customName");
+		List<String> placeidList=customMapper.selectCustom(userId, customName);
+		logger.info(userId+", "+customName);
+		List<PlaceDTO> placeList=new ArrayList<PlaceDTO>();
+		for(int i=0; i<placeidList.size(); i++){
+			placeList.add(placeMapper.selectByPlaceId(placeidList.get(i)));
+		}
+		Map<Integer,PlaceDTO> customData=new HashMap<Integer,PlaceDTO>();
+		for(int i=0; i<placeList.size(); i++)
+			customData.put(i, placeList.get(i));
+		return customData;
+	}
+
 
 
 

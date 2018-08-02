@@ -10,8 +10,9 @@ import kr.ac.smu.DTO.PlaceDTO;
 public interface PlaceMapper {
 	
 	
-	@Select("SELECT* FROM info WHERE id=#{id}")
+	@Select("SELECT* FROM place WHERE id=#{id} limit 1")
 	public PlaceDTO selectByPlaceId(@Param("id") String id);
-	
+	@Select("SELECT* FROM place WHERE place_name=#{id} limit 1")
+	public PlaceDTO selectByPlaceName(@Param("id") String id);
 
 }
