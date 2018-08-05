@@ -1,0 +1,31 @@
+
+spring:
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+---
+spring:
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    url: 
+    username: 
+    password: 
+
+---
+server:
+  port: 8090 #Https port
+  ssl:
+    enabled: true
+    key-store: /Users/seojaeyeon/jykeystore.jks # 1번에서 생성한 Key store 경로와 파일명을 적어줍니다. 
+    key-store-password:  # 1번에서 생성한 Key store의 비밀번호를 적어줍니다.
+    key-password: # 1번에서 생성한 키스토어의 마지막의 키 비밀번호
+    key-alias: jykeystore # 키 스토어 별칭
+    trust-store: /Users/seojaeyeon/jytruestore.ts # 2번에서 생성한 Trust-Store 경로
+    trust-store-password: # Trust-Store 비밀번호
+---
+amazonProperties:
+  region: ap-southeast-1
+  accessKey: 
+  secretKey: 
+  bucketName: jybucketest
