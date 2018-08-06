@@ -7,7 +7,9 @@ import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.logging.LogManager;
 
 import org.aspectj.lang.annotation.DeclareError;
 
@@ -35,6 +37,11 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ibm.watson.developer_cloud.assistant.v1.Assistant;
+import com.ibm.watson.developer_cloud.assistant.v1.model.InputData;
+import com.ibm.watson.developer_cloud.assistant.v1.model.MessageOptions;
+import com.ibm.watson.developer_cloud.assistant.v1.model.MessageResponse;
+import com.ibm.watson.developer_cloud.assistant.v1.model.RuntimeIntent;
 
 import kr.ac.smu.mapper.JSONMapper;
 import kr.ac.smu.mapper.RealTimeArrivalList;
@@ -56,7 +63,42 @@ public class HomeController {
 	 * @throws JsonMappingException 
 	 * @throws JsonParseException 
 	 */
-	//공공데이터 API test
+	//테스트
+	@RequestMapping(value="/watson", method=RequestMethod.GET ,produces = "application/json;charset=UTF-8")
+	public String watson(){
+		LogManager.getLogManager().reset();
+
+	    // Set up Assistant service.
+	    Assistant service = new Assistant("2018-08-06");
+	    service.setUsernameAndPassword("", // replace with service username
+	                                   ""); // replace with service password
+	    String workspaceId = ""; // replace with workspace ID
+
+	    // Start assistant with empty message.
+	    MessageOptions options = new MessageOptions.Builder(workspaceId).build();
+	    
+
+	   
+
+
+	        String inputText = "홍대입구역인데 언제와?";
+	        InputData input = new InputData.Builder(inputText).build();
+	        options = new MessageOptions.Builder(workspaceId).input(input).build();
+	     
+	        // Send message to Assistant service.
+	        MessageResponse response = service.message(options).execute();      
+	        String responseText = response.getOutput().getText().get(0);
+	        List<RuntimeIntent> responseIntents = response.getIntents();
+
+	        // If an intent was detected, print it to the console.
+	        if(responseIntents.size() > 0) {
+	          System.out.println("Detected intent: #" + responseIntents.get(0).getIntent());
+	        }
+
+	    return response.getOutput().getText().get(0);
+	    
+	}
+	//테스트
 	@RequestMapping(value="/subway", method=RequestMethod.GET,produces = "application/json;charset=UTF-8")
 	public JsonNode test() throws JsonParseException, JsonMappingException, IOException{
 		RestTemplate restTemplate = new RestTemplate(); 
@@ -66,10 +108,9 @@ public class HomeController {
 		
 		 
 		HttpEntity entity = new HttpEntity("parameters", headers); 
-		//http://swopenapi.seoul.go.kr/api/subway/sample/json/realtimeStationArrival/0/5/서울
-		//http://swopenapi.seoul.go.kr/api/subway/4f457a79516131303130335545425347/json/realtimeStationArrival/0/5/%EC%84%9C%EC%9A%B8
+
 		logger.info(URLEncoder.encode("서울","UTF-8"));
-		URI url=URI.create("http://swopenapi.seoul.go.kr/api/subway/appkey/json/realtimeStationArrival/0/5/"+URLEncoder.encode("서울","UTF-8")); 
+		URI url=URI.create("http://swopenapi.seoul.go.kr/api/subway//json/realtimeStationArrival/0/5/"+URLEncoder.encode("서울","UTF-8")); 
 		//x -> x좌표, y -> y좌표 
 		 
 		ResponseEntity response= restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
@@ -113,9 +154,35 @@ public class HomeController {
 			return res_vo;
 		}
 		
-		//지하철 역명 받기
-		String station=vo.getContent();		
-		logger.info(station);
+		//텍스트 요청 받
+		String query=vo.getContent();		
+		
+
+	    // Set up Assistant service.
+	    Assistant service = new Assistant("2018-08-06");
+	    service.setUsernameAndPassword("", // replace with service username
+	                                   ""); // replace with service password
+	    String workspaceId = ""; // replace with workspace ID
+
+	    // Start assistant with empty message.
+	    MessageOptions options = new MessageOptions.Builder(workspaceId).build();
+	    
+	    InputData input = new InputData.Builder(query).build();
+	    options = new MessageOptions.Builder(workspaceId).input(input).build();
+	     
+	        // Send message to Assistant service.
+	    MessageResponse mes_response = service.message(options).execute();      
+	    String responseText = mes_response.getOutput().getText().get(0);
+	    List<RuntimeIntent> responseIntents = mes_response.getIntents();
+
+	        // If an intent was detected, print it to the console.
+	    if(responseIntents.size() > 0) {
+	    System.out.println("Detected intent: #" + responseIntents.get(0).getIntent());
+	    }
+
+	    String station= mes_response.getOutput().getText().get(0);
+		
+
 		RestTemplate restTemplate = new RestTemplate(); 
 		 
 		HttpHeaders headers = new HttpHeaders(); 
@@ -124,7 +191,7 @@ public class HomeController {
 		String encodeStation=URLEncoder.encode(station,"UTF-8");
 		HttpEntity entity = new HttpEntity("parameters", headers); 
 		//http://swopenapi.seoul.go.kr/api/subway/sample/json/realtimeStationArrival/0/5/서울
-		URI url=URI.create("http://swopenapi.seoul.go.kr/api/subway/appkey/json/realtimeStationArrival/0/5/"+encodeStation); 
+		URI url=URI.create("http://swopenapi.seoul.go.kr/api/subway//json/realtimeStationArrival/0/5/"+encodeStation); 
 		//x -> x좌표, y -> y좌표 
 		 
 		ResponseEntity response= restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
