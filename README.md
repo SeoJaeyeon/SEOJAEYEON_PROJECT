@@ -1,33 +1,40 @@
-## 서재연의 포트폴리오 
+# 서재연의 포트폴리오
 
 ### Programming language skill
+
+---
 
 - Java(상), SpringFramework, SpringBoot
 - C++(중하)
 - Html, CSS, Javascript(중하-  Bootstrap Opensource를 커스텀할 수 있을 정도의 수준)
-  
+
+
 
 ### Tools
 
+---
+
 Eclipse, AWS(EC2-Ubuntu, S3, RDS-MySQL, MariaDB)
-
-
 
 ### 관심직무
 
+---
+
 Web Service Developer (Backend)
-
-
 
 ### 경력
 
+---
+
 **기간**: 2018-07-02~2017-08-24
 
-**기간**: 서울시정 인턴십 프로그램- 서울산업진흥원 
+**근무지**: 서울시정 인턴십 프로그램- 서울산업진흥원 
 
-**주요업무**: 홈페이지 컨텐츠 관리 및 FAQ업로드 
+**주요업무**: 홈페이지 컨텐츠 관리 및 FAQ업로드(Zendesk)
 
 ### 특이사항
+
+---
 
 [서재연의블로그](http://a1010100z.tistory.com/) - 개발일기를 기록하고 있습니다.
 
